@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="theme-color" content="#131313"/>
+<title>She</title>
+<link rel="manifest" href="#" id="manifest-link"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Manrope:wght@200..800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface": "#131313",
+        "surface-container-lowest": "#0e0e0e",
+        "surface-container-low": "#1c1b1b",
+        "surface-container": "#201f1f",
+        "surface-container-high": "#2a2a2a",
+        "surface-container-highest": "#353534",
+        "surface-bright": "#393939",
+        "surface-variant": "#353534",
+        "on-surface": "#e5e2e1",
+        "on-surface-variant": "#d4c2c2",
+        "primary": "#f1c0c0",
+        "primary-container": "#d4a5a5",
+        "primary-fixed": "#ffdad9",
+        "primary-fixed-dim": "#ecbbba",
+        "on-primary": "#472828",
+        "secondary": "#ddc0bf",
+        "secondary-container": "#594443",
+        "on-secondary": "#3e2c2b",
+        "tertiary": "#efc84e",
+        "tertiary-container": "#d2ad35",
+        "on-tertiary": "#3c2f00",
+        "outline": "#9d8d8d",
+        "outline-variant": "#504444",
+        "background": "#131313",
+        "on-background": "#e5e2e1",
+        "error": "#ffb4ab",
+      },
+      borderRadius: {
+        "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"
+      },
+      fontFamily: {
+        "headline": ["Newsreader", "serif"],
+        "body": ["Manrope", "sans-serif"],
+        "label": ["Manrope", "sans-serif"]
+      }
+    }
+  }
+}
+</script>
+<style>
+* { -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Manrope', sans-serif; background-color: #131313; color: #E5E2E1; overscroll-behavior: none; }
+.font-headline { font-family: 'Newsreader', serif; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+
+/* Screens */
+.screen { display: none; min-height: 100dvh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* Botanical bg for she screen */
+.botanical-bg {
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(241,192,192,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(239,200,78,0.03) 0%, transparent 60%);
+}
+
+/* Leaf watermark */
+.leaf-watermark {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'%3E%3Cpath d='M100 280 C100 280 20 200 20 120 C20 60 60 20 100 10 C140 20 180 60 180 120 C180 200 100 280 100 280Z' fill='none' stroke='%23d4a5a5' stroke-width='0.8' opacity='0.12'/%3E%3Cpath d='M100 280 L100 10' stroke='%23d4a5a5' stroke-width='0.5' opacity='0.08'/%3E%3Cpath d='M100 80 C80 90 40 100 20 120' stroke='%23d4a5a5' stroke-width='0.4' opacity='0.07'/%3E%3Cpath d='M100 120 C80 130 50 140 30 160' stroke='%23d4a5a5' stroke-width='0.4' opacity='0.07'/%3E%3Cpath d='M100 160 C80 165 60 175 45 195' stroke='%23d4a5a5' stroke-width='0.4' opacity='0.07'/%3E%3Cpath d='M100 80 C120 90 160 100 180 120' stroke='%23d4a5a5' stroke-width='0.4' opacity='0.07'/%3E%3Cpath d='M100 120 C120 130 150 140 170 160' stroke='%23d4a5a5' stroke-width='0.4' opacity='0.07'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: -40px -20px;
+  background-size: 280px 420px;
+  pointer-events: none;
+}
+
+/* Input underline style */
+.input-botanical {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(80,68,68,0.4);
+  border-radius: 0;
+  color: #e5e2e1;
+  font-family: 'Manrope', sans-serif;
+  outline: none;
+  transition: border-color 0.3s;
+  width: 100%;
+  padding: 12px 0;
+}
+.input-botanical::placeholder { color: rgba(213,194,194,0.3); }
+.input-botanical:focus { border-bottom-color: #f1c0c0; box-shadow: none; }
+
+/* Category cards */
+.cat-card {
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 20px; border-radius: 0.75rem;
+  background: #1c1b1b;
+  cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden;
+  border: 1.5px solid transparent;
+}
+.cat-card:active { transform: scale(0.97); }
+.cat-card.selected-home { background: rgba(141,163,153,0.15); border-color: #8DA399; }
+.cat-card.selected-body { background: rgba(241,192,192,0.15); border-color: #f1c0c0; }
+.cat-card.selected-work { background: rgba(139,141,255,0.15); border-color: #8B8DFF; }
+.cat-card.selected-creative { background: rgba(239,200,78,0.15); border-color: #efc84e; }
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  display: flex; justify-content: space-around; align-items: center;
+  padding: 12px 32px calc(12px + env(safe-area-inset-bottom));
+  background: rgba(28,27,27,0.85);
+  backdrop-filter: blur(20px);
+  border-top: 0.5px solid rgba(255,255,255,0.06);
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; color: rgba(229,226,225,0.4); transition: color 0.2s; text-decoration: none; }
+.nav-item.active { color: #f1c0c0; }
+.nav-item span.label { font-size: 10px; letter-spacing: 0.05em; font-family: 'Manrope', sans-serif; }
+
+/* Herbarium timeline dot */
+.herbarium-dot::after {
+  content: ''; position: absolute; left: 3px; top: 12px;
+  width: 1px; height: calc(100% + 20px);
+  background: linear-gradient(to bottom, rgba(212,165,165,0.3) 0%, transparent 100%);
+}
+
+/* Toast */
+#toast {
+  position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: #1c1b1b; border: 0.5px solid rgba(241,192,192,0.2);
+  color: #f1c0c0; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 10px 24px; border-radius: 999px;
+  opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 200;
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* Ambient glows */
+.glow-rose { position: fixed; top: 25%; right: -80px; width: 300px; height: 300px; background: rgba(241,192,192,0.04); border-radius: 50%; filter: blur(80px); pointer-events: none; }
+.glow-gold { position: fixed; bottom: 25%; left: -80px; width: 300px; height: 300px; background: rgba(239,200,78,0.03); border-radius: 50%; filter: blur(80px); pointer-events: none; }
+
+/* Log button disabled */
+#log-btn:disabled { opacity: 0.35; cursor: default; }
+
+/* Edit modal */
+#edit-modal {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(13,13,13,0.96);
+  display: none; flex-direction: column;
+  padding: 48px 24px 40px;
+}
+#edit-modal.open { display: flex; }
+
+/* Donut chart */
+.donut-ring { transition: stroke-dasharray 0.5s ease; }
+
+/* Scroll padding for bottom nav */
+.scroll-content { padding-bottom: 100px; }
+
+/* Tab underline */
+.tab-active { border-bottom: 2px solid #f1c0c0; color: #e5e2e1; }
+.tab-inactive { border-bottom: 2px solid transparent; color: rgba(229,226,225,0.35); }
+</style>
+</head>
+<body class="bg-surface text-on-surface">
+
+<!-- Ambient glows (always present) -->
+<div class="glow-rose"></div>
+<div class="glow-gold"></div>
+
+<!-- Toast -->
+<div id="toast">evidence recorded</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: SHE (Opening) -->
+<!-- ============================================================ -->
+<div id="screen-she" class="screen active botanical-bg" style="position:relative;">
+  <div class="leaf-watermark"></div>
+
+  <!-- Header — sticky -->
+  <header class="w-full px-6 pt-6 pb-3 flex justify-between items-center z-10 flex-shrink-0">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary" style="font-size:20px;">spa</span>
+      <h1 class="font-headline italic text-primary tracking-widest text-xl lowercase">she</h1>
+    </div>
+    <button onclick="openEdit()" class="text-on-surface-variant hover:text-on-surface transition-colors flex items-center gap-1">
+      <span style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; font-family:'Manrope',sans-serif;">edit</span>
+      <span class="material-symbols-outlined" style="font-size:14px;">edit</span>
+    </button>
+  </header>
+
+  <!-- Scrollable quote area -->
+  <div class="flex-grow relative overflow-hidden z-10">
+    <!-- Fade mask at bottom of scroll area -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom, transparent, #131313);pointer-events:none;z-index:2;"></div>
+    <div id="she-quote-scroll" style="height:100%;overflow-y:auto;padding:8px 40px 80px;-webkit-overflow-scrolling:touch;">
+      <p class="font-headline italic text-center mb-5" style="color:#ecbbba;opacity:0.7;font-size:15px;letter-spacing:0.05em;">A gentle reminder</p>
+      <div id="she-quote-display" class="font-headline text-on-surface text-center" style="font-size:22px;line-height:1.6;"></div>
+      <div class="flex justify-center gap-2 mt-8 mb-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-primary opacity-30"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-tertiary"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-primary opacity-30"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA — always anchored at bottom -->
+  <footer class="w-full px-6 pb-10 pt-4 flex flex-col items-center gap-5 z-10 flex-shrink-0" style="background: linear-gradient(to bottom, transparent, #131313 30%);">
+    <button onclick="goTo('screen-log')" class="w-full flex items-center justify-center gap-3 py-5 px-8 rounded-full text-on-primary font-label font-semibold tracking-widest uppercase text-sm transition-all active:scale-[0.98]" style="background: linear-gradient(135deg, #f1c0c0, #d4a5a5); box-shadow: 0 20px 40px rgba(241,192,192,0.12);">
+      she showed up today
+      <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+    </button>
+    <div class="flex items-center gap-4 opacity-25">
+      <div class="h-px w-10 bg-on-surface-variant"></div>
+      <p style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; font-family:'Manrope',sans-serif;" class="text-on-surface-variant">Curated for her</p>
+      <div class="h-px w-10 bg-on-surface-variant"></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: LOG -->
+<!-- ============================================================ -->
+<div id="screen-log" class="screen">
+  <!-- Header -->
+  <header class="w-full px-6 pt-6 pb-2 flex justify-between items-center sticky top-0 z-40" style="background:rgba(19,19,19,0.9); backdrop-filter:blur(16px);">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-primary" style="font-size:20px;">spa</span>
+      <h1 class="font-headline italic text-primary tracking-widest text-xl uppercase">She</h1>
+    </div>
+    <button onclick="goTo('screen-settings')" class="text-on-surface-variant hover:text-on-surface transition-colors">
+      <span class="material-symbols-outlined">settings</span>
+    </button>
+  </header>
+
+  <main class="flex-grow px-6 pt-6 scroll-content overflow-y-auto">
+    <!-- Editorial header -->
+    <h2 class="font-headline text-5xl font-light italic tracking-tight mb-8">Preserve your <span class="text-primary">growth.</span></h2>
+
+    <!-- Tabs -->
+    <div class="flex gap-8 mb-10">
+      <button id="tab-log" onclick="switchLogTab('log')" class="font-headline text-2xl pb-2 transition-all tab-active">Log a win</button>
+      <button id="tab-today" onclick="switchLogTab('today')" class="font-headline text-2xl pb-2 transition-all tab-inactive">Today</button>
+    </div>
+
+    <!-- LOG TAB -->
+    <div id="log-tab">
+      <!-- Text input -->
+      <div class="relative mb-2 group">
+        <textarea id="win-input" class="input-botanical text-lg resize-none" rows="2" placeholder="what just happened..." maxlength="160" oninput="checkLogBtn()"></textarea>
+        <span style="display:block; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:#8DA399; margin-top:6px;">Write with intention. Every moment counts.</span>
+      </div>
+
+      <!-- Categories -->
+      <div class="grid grid-cols-2 gap-3 mt-8">
+        <button class="cat-card" id="cat-Home" onclick="selectCat('Home')">
+          <span class="material-symbols-outlined mb-3" style="color:#8DA399; font-size:22px;">home</span>
+          <span style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#8DA399;">Home</span>
+        </button>
+        <button class="cat-card" id="cat-Body" onclick="selectCat('Body')">
+          <span class="material-symbols-outlined mb-3" style="color:#f1c0c0; font-size:22px;">favorite</span>
+          <span style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#f1c0c0;">Body</span>
+        </button>
+        <button class="cat-card" id="cat-Work" onclick="selectCat('Work')">
+          <span class="material-symbols-outlined mb-3" style="color:#8B8DFF; font-size:22px;">work</span>
+          <span style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#8B8DFF;">Work</span>
+        </button>
+        <button class="cat-card" id="cat-Creative" onclick="selectCat('Creative')">
+          <span class="material-symbols-outlined mb-3" style="color:#efc84e; font-size:22px;">palette</span>
+          <span style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:#efc84e;">Creative</span>
+        </button>
+      </div>
+
+      <!-- Submit -->
+      <div class="flex justify-end mt-8">
+        <button id="log-btn" onclick="logWin()" disabled class="px-10 py-4 rounded-full font-label font-semibold tracking-widest uppercase text-xs text-on-primary transition-all active:scale-95" style="background: linear-gradient(135deg, #f1c0c0, #d4a5a5); box-shadow: 0 20px 40px rgba(241,192,192,0.12);">
+          Log it
+        </button>
+      </div>
+
+      <!-- Herbarium log list -->
+      <div class="mt-16 mb-4">
+        <div class="flex items-center justify-between mb-8">
+          <h3 class="font-headline text-3xl font-light">The Herbarium</h3>
+          <span style="font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(157,141,141,0.5);">Today's Archives</span>
+        </div>
+        <div id="herbarium-list" class="space-y-6"></div>
+      </div>
+    </div>
+
+    <!-- TODAY TAB -->
+    <div id="today-tab" style="display:none;">
+      <div class="flex flex-col items-center pt-4">
+        <!-- Date -->
+        <p style="font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:rgba(157,141,141,0.6);" class="mb-2" id="today-date"></p>
+        <h3 class="font-headline text-3xl font-light italic mb-10">Today's Harvest</h3>
+
+        <!-- Donut -->
+        <div class="relative w-64 h-64 mb-2">
+          <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="transparent" stroke="#1c1b1b" stroke-width="10"/>
+            <circle id="donut-home"     cx="50" cy="50" r="40" fill="transparent" stroke="#8DA399" stroke-width="10" stroke-dasharray="0 251" class="donut-ring"/>
+            <circle id="donut-body"     cx="50" cy="50" r="40" fill="transparent" stroke="#f1c0c0" stroke-width="10" stroke-dasharray="0 251" class="donut-ring"/>
+            <circle id="donut-work"     cx="50" cy="50" r="40" fill="transparent" stroke="#8B8DFF" stroke-width="10" stroke-dasharray="0 251" class="donut-ring"/>
+            <circle id="donut-creative" cx="50" cy="50" r="40" fill="transparent" stroke="#efc84e" stroke-width="10" stroke-dasharray="0 251" class="donut-ring"/>
+          </svg>
+          <div class="absolute inset-0 flex flex-col items-center justify-center">
+            <span id="donut-total" class="font-headline text-5xl italic text-primary">0</span>
+            <span style="font-size:10px; letter-spacing:0.2em; text-transform:uppercase; color:rgba(212,194,194,0.6);">Wins Today</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div class="w-full space-y-3 mt-8">
+          <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:#1c1b1b;">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full" style="background:#8DA399;"></div>
+              <span class="text-sm font-body text-on-surface">Home</span>
+            </div>
+            <span id="count-Home" class="font-headline italic text-sm" style="color:#8DA399;">0</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:#1c1b1b;">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-primary"></div>
+              <span class="text-sm font-body text-on-surface">Body</span>
+            </div>
+            <span id="count-Body" class="font-headline italic text-sm text-primary">0</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:#1c1b1b;">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full" style="background:#8B8DFF;"></div>
+              <span class="text-sm font-body text-on-surface">Work</span>
+            </div>
+            <span id="count-Work" class="font-headline italic text-sm" style="color:#8B8DFF;">0</span>
+          </div>
+          <div class="flex items-center justify-between px-4 py-3 rounded-xl" style="background:#1c1b1b;">
+            <div class="flex items-center gap-3">
+              <div class="w-2 h-2 rounded-full bg-tertiary"></div>
+              <span class="text-sm font-body text-on-surface">Creative</span>
+            </div>
+            <span id="count-Creative" class="font-headline italic text-sm text-tertiary">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a class="nav-item" onclick="goTo('screen-she')">
+      <span class="material-symbols-outlined" style="font-size:22px;">auto_stories</span>
+      <span class="label">Reflect</span>
+    </a>
+    <a class="nav-item active">
+      <div style="width:48px;height:48px;background:#1c1b1b;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-24px;border:0.5px solid rgba(255,255,255,0.06);">
+        <span class="material-symbols-outlined text-primary" style="font-size:26px; font-variation-settings:'FILL' 1,'wght' 300,'GRAD' 0,'opsz' 24;">add_circle</span>
+      </div>
+      <span class="label">Log</span>
+    </a>
+    <a class="nav-item" onclick="goTo('screen-settings')">
+      <span class="material-symbols-outlined" style="font-size:22px;">settings</span>
+      <span class="label">Settings</span>
+    </a>
+  </nav>
+</div>
+
+<!-- ============================================================ -->
+<!-- SCREEN: SETTINGS -->
+<!-- ============================================================ -->
+<div id="screen-settings" class="screen">
+  <header class="w-full px-6 pt-6 pb-2 flex justify-between items-center sticky top-0 z-40" style="background:rgba(19,19,19,0.9); backdrop-filter:blur(16px);">
+    <span class="material-symbols-outlined text-primary" style="font-size:20px;">spa</span>
+    <h1 class="font-headline italic text-primary tracking-widest text-xl uppercase">She</h1>
+    <span class="material-symbols-outlined text-tertiary">settings</span>
+  </header>
+
+  <main class="flex-grow px-6 pt-8 scroll-content overflow-y-auto">
+    <span class="font-headline italic text-tertiary text-lg tracking-wide block mb-2">Curate your space</span>
+    <h2 class="font-headline text-5xl font-light text-primary mb-1">Settings</h2>
+    <div class="h-px w-16 mb-12" style="background: linear-gradient(to right, rgba(241,192,192,0.3), transparent);"></div>
+
+    <!-- Webhook -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:#1c1b1b;">
+          <span class="material-symbols-outlined text-primary" style="font-size:18px;">cloud_sync</span>
+        </div>
+        <div>
+          <h3 class="font-headline text-xl text-on-surface">Data Integration</h3>
+          <p style="font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:#9d8d8d;">Connect your herbarium</p>
+        </div>
+      </div>
+      <div class="rounded-xl p-6" style="background:#1c1b1b;">
+        <label class="block text-sm text-on-surface-variant mb-4 font-label" for="webhook-input">Google Sheet Webhook URL</label>
+        <input id="webhook-input" type="text" placeholder="https://script.google.com/macros/s/..." class="input-botanical text-sm"/>
+        <p class="mt-4 text-xs text-outline italic leading-relaxed">Your data is preserved locally. Providing a webhook archives your reflections to a private botanical spreadsheet.</p>
+        <div class="flex justify-end mt-6">
+          <button onclick="saveWebhook()" class="px-8 py-3 rounded-full font-label text-sm font-semibold tracking-wide text-on-primary active:scale-95 transition-transform" style="background: linear-gradient(135deg, #f1c0c0, #d4a5a5);">
+            Save Configuration
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit She Quote shortcut -->
+    <div class="mb-12">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:#1c1b1b;">
+          <span class="material-symbols-outlined text-tertiary" style="font-size:18px;">edit_note</span>
+        </div>
+        <div>
+          <h3 class="font-headline text-xl text-on-surface">Her Description</h3>
+          <p style="font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:#9d8d8d;">Edit opening reminder</p>
+        </div>
+      </div>
+      <div class="rounded-xl p-6" style="background:#1c1b1b;">
+        <p class="text-sm text-outline italic leading-relaxed mb-4">The words she reads every morning before logging her wins.</p>
+        <button onclick="openEdit()" class="px-8 py-3 rounded-full font-label text-sm font-semibold tracking-wide active:scale-95 transition-transform" style="border: 1px solid rgba(241,192,192,0.2); color:#f1c0c0;">
+          Edit her description
+        </button>
+      </div>
+    </div>
+
+    <!-- Palette display -->
+    <div class="mb-16">
+      <h4 class="font-headline text-lg text-secondary mb-4">Nocturnal Palette</h4>
+      <div class="flex gap-3">
+        <div class="w-8 h-8 rounded-full bg-primary"></div>
+        <div class="w-8 h-8 rounded-full bg-tertiary" style="opacity:0.7;"></div>
+        <div class="w-8 h-8 rounded-full" style="background:#8DA399; opacity:0.7;"></div>
+        <div class="w-8 h-8 rounded-full" style="background:#8B8DFF; opacity:0.7;"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a class="nav-item" onclick="goTo('screen-she')">
+      <span class="material-symbols-outlined" style="font-size:22px;">auto_stories</span>
+      <span class="label">Reflect</span>
+    </a>
+    <a class="nav-item" onclick="goTo('screen-log')">
+      <div style="width:48px;height:48px;background:#1c1b1b;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-24px;border:0.5px solid rgba(255,255,255,0.06);">
+        <span class="material-symbols-outlined text-primary" style="font-size:26px; font-variation-settings:'FILL' 1,'wght' 300,'GRAD' 0,'opsz' 24;">add_circle</span>
+      </div>
+      <span class="label">Log</span>
+    </a>
+    <a class="nav-item active">
+      <span class="material-symbols-outlined" style="font-size:22px;">settings</span>
+      <span class="label">Settings</span>
+    </a>
+  </nav>
+</div>
+
+<!-- ============================================================ -->
+<!-- EDIT MODAL (full screen overlay) -->
+<!-- ============================================================ -->
+<div id="edit-modal">
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="font-headline text-3xl italic text-primary">Edit her</h2>
+    <button onclick="closeEdit()" class="text-on-surface-variant hover:text-on-surface">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <p class="text-xs text-outline italic mb-4 leading-relaxed">These are the words she reads every morning. Edit them to feel true to you.</p>
+  <textarea id="edit-textarea" class="input-botanical flex-grow text-sm leading-relaxed" style="resize:none; height:60vh; border: 0.5px solid rgba(80,68,68,0.3); border-radius:0.75rem; padding:16px; font-family:'Newsreader',serif; font-style:italic;"></textarea>
+  <div class="flex gap-3 mt-6">
+    <button onclick="closeEdit()" class="flex-1 py-3 rounded-full font-label text-sm tracking-wide active:scale-95 transition-transform" style="border:1px solid rgba(80,68,68,0.4); color:#9d8d8d;">
+      Cancel
+    </button>
+    <button onclick="saveQuote()" class="flex-1 py-3 rounded-full font-label text-sm font-semibold tracking-wide text-on-primary active:scale-95 transition-transform" style="background: linear-gradient(135deg, #f1c0c0, #d4a5a5);">
+      Save
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+const DEFAULT_QUOTE = `She sits down to her meals and enjoys them.
+She listens to her body, honors when she feels satisfied, and lets nourishment be something she receives.
+She starts her mornings by getting clear.
+She meets what needs her attention with calm discipline.
+She works in focused stretches, then steps away to move her body, eat something fresh, and return to herself.
+She makes a lovely lunch.
+She protects sacred time with her son.
+She works with intention in the afternoon.
+She starts dinner with grace.
+She tends to her family and the home she is creating.
+She does not chase perfection.
+She embodies her standards, and that is enough for today.`;
+
+const CAT_COLORS = { Home: 'home', Body: 'body', Work: 'work', Creative: 'creative' };
+const CIRC = 2 * Math.PI * 40;
+
+let selectedCat = null;
+let logs = [];
+let currentScreen = 'screen-she';
+
+// ---- INIT ----
+function init() {
+  logs = JSON.parse(localStorage.getItem('she_logs') || '[]');
+  const webhook = localStorage.getItem('she_webhook') || '';
+  if (webhook) document.getElementById('webhook-input').value = webhook;
+  renderQuote();
+  renderHerbarium();
+  renderDonut();
+  setTodayDate();
+}
+
+// ---- NAVIGATION ----
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  currentScreen = screenId;
+  if (screenId === 'screen-log') {
+    renderHerbarium();
+    renderDonut();
+  }
+  window.scrollTo(0,0);
+}
+
+// ---- QUOTE ----
+function getQuote() { return localStorage.getItem('she_quote') || DEFAULT_QUOTE; }
+
+function renderQuote() {
+  const q = getQuote();
+  const el = document.getElementById('she-quote-display');
+  // Render each line as a paragraph for breathing room
+  el.innerHTML = q.split('\n').filter(l => l.trim()).map(line =>
+    `<p style="margin-bottom:0.6em;">${line}</p>`
+  ).join('');
+}
+
+function openEdit() {
+  document.getElementById('edit-textarea').value = getQuote();
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+function closeEdit() {
+  document.getElementById('edit-modal').classList.remove('open');
+}
+
+function saveQuote() {
+  const val = document.getElementById('edit-textarea').value.trim();
+  if (val) {
+    localStorage.setItem('she_quote', val);
+    renderQuote();
+  }
+  closeEdit();
+  showToast('her words saved');
+}
+
+// ---- LOG TAB ----
+function switchLogTab(tab) {
+  const logTab = document.getElementById('log-tab');
+  const todayTab = document.getElementById('today-tab');
+  const tabLog = document.getElementById('tab-log');
+  const tabToday = document.getElementById('tab-today');
+
+  if (tab === 'log') {
+    logTab.style.display = 'block';
+    todayTab.style.display = 'none';
+    tabLog.className = 'font-headline text-2xl pb-2 transition-all tab-active';
+    tabToday.className = 'font-headline text-2xl pb-2 transition-all tab-inactive';
+  } else {
+    logTab.style.display = 'none';
+    todayTab.style.display = 'block';
+    tabLog.className = 'font-headline text-2xl pb-2 transition-all tab-inactive';
+    tabToday.className = 'font-headline text-2xl pb-2 transition-all tab-active';
+    renderDonut();
+  }
+}
+
+// ---- CATEGORY SELECTION ----
+function selectCat(cat) {
+  selectedCat = cat;
+  document.querySelectorAll('.cat-card').forEach(c => {
+    c.className = 'cat-card';
+  });
+  const card = document.getElementById('cat-' + cat);
+  if (card) card.classList.add('selected-' + cat.toLowerCase());
+  checkLogBtn();
+}
+
+function checkLogBtn() {
+  const txt = document.getElementById('win-input').value.trim();
+  document.getElementById('log-btn').disabled = !(txt && selectedCat);
+}
+
+// ---- LOG WIN ----
+function logWin() {
+  const text = document.getElementById('win-input').value.trim();
+  if (!text || !selectedCat) return;
+
+  const entry = { text, cat: selectedCat, ts: Date.now() };
+  logs.unshift(entry);
+  localStorage.setItem('she_logs', JSON.stringify(logs));
+
+  sendToSheet(entry);
+
+  // Reset
+  document.getElementById('win-input').value = '';
+  document.querySelectorAll('.cat-card').forEach(c => c.className = 'cat-card');
+  selectedCat = null;
+  checkLogBtn();
+
+  renderHerbarium();
+  renderDonut();
+  showToast('evidence recorded');
+}
+
+// ---- SEND TO SHEET ----
+function sendToSheet(entry) {
+  const url = localStorage.getItem('she_webhook');
+  if (!url) return;
+  const d = new Date(entry.ts);
+  fetch(url, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      time: d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+      category: entry.cat,
+      win: entry.text
+    })
+  }).catch(() => {});
+}
+
+// ---- SAVE WEBHOOK ----
+function saveWebhook() {
+  const url = document.getElementById('webhook-input').value.trim();
+  localStorage.setItem('she_webhook', url);
+  showToast('configuration saved');
+}
+
+// ---- TODAY'S LOGS ----
+function todayLogs() {
+  const start = new Date(); start.setHours(0,0,0,0);
+  return logs.filter(l => l.ts >= start.getTime());
+}
+
+// ---- HERBARIUM LIST ----
+const CAT_DOT_COLORS = { Home: '#8DA399', Body: '#f1c0c0', Work: '#8B8DFF', Creative: '#efc84e' };
+const CAT_TEXT_COLORS = { Home: '#8DA399', Body: '#f1c0c0', Work: '#8B8DFF', Creative: '#efc84e' };
+
+function renderHerbarium() {
+  const today = todayLogs();
+  const el = document.getElementById('herbarium-list');
+  if (!today.length) {
+    el.innerHTML = `<p style="font-family:'Newsreader',serif; font-style:italic; color:rgba(157,141,141,0.4); font-size:15px; text-align:center; padding: 2rem 0;">Your first win awaits.</p>`;
+    return;
+  }
+  el.innerHTML = today.map((l, i) => {
+    const t = new Date(l.ts).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const color = CAT_DOT_COLORS[l.cat] || '#f1c0c0';
+    const isLast = i === today.length - 1;
+    return `
+      <div class="flex gap-5 group" style="padding-bottom:${isLast ? '0' : '8px'};">
+        <div class="flex flex-col items-center" style="position:relative; ${isLast ? '' : 'padding-bottom:24px;'}">
+          <div style="width:8px;height:8px;border-radius:50%;background:${color};margin-top:4px;box-shadow:0 0 8px ${color}66;flex-shrink:0;"></div>
+          ${!isLast ? `<div style="width:1px;flex:1;margin-top:4px;background:linear-gradient(to bottom, ${color}33, transparent);"></div>` : ''}
+        </div>
+        <div style="flex:1;padding-bottom:${isLast ? '0' : '4px'};">
+          <div class="flex justify-between items-baseline mb-1">
+            <span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:${color};">${l.cat}</span>
+            <span style="font-size:10px;color:rgba(157,141,141,0.4);">${t}</span>
+          </div>
+          <p style="font-family:'Newsreader',serif;font-style:italic;color:rgba(229,226,225,0.75);font-size:15px;line-height:1.5;">${l.text}</p>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ---- DONUT CHART ----
+function renderDonut() {
+  const today = todayLogs();
+  const counts = { Home: 0, Body: 0, Work: 0, Creative: 0 };
+  today.forEach(l => { if (counts[l.cat] !== undefined) counts[l.cat]++; });
+  const total = today.length;
+
+  document.getElementById('donut-total').textContent = total;
+  ['Home','Body','Work','Creative'].forEach(cat => {
+    document.getElementById('count-' + cat).textContent = counts[cat];
+  });
+
+  if (total === 0) {
+    ['home','body','work','creative'].forEach(c => {
+      document.getElementById('donut-' + c).setAttribute('stroke-dasharray', `0 ${CIRC}`);
+    });
+    return;
+  }
+
+  const gap = 2;
+  let offset = 0;
+  const cats = ['Home','Body','Work','Creative'];
+  const ids   = ['home','body','work','creative'];
+
+  cats.forEach((cat, i) => {
+    const pct = counts[cat] / total;
+    const dash = pct > 0 ? Math.max(0, pct * CIRC - gap) : 0;
+    const el = document.getElementById('donut-' + ids[i]);
+    el.setAttribute('stroke-dasharray', `${dash} ${CIRC - dash}`);
+    el.setAttribute('stroke-dashoffset', -offset * CIRC);
+    offset += pct;
+  });
+}
+
+// ---- DATE ----
+function setTodayDate() {
+  const d = new Date();
+  document.getElementById('today-date').textContent = d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+}
+
+// ---- TOAST ----
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg || 'evidence recorded';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ---- PWA MANIFEST ----
+function injectManifest() {
+  const manifest = {
+    name: "She",
+    short_name: "She",
+    description: "A daily evidence log for the woman you are becoming.",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#131313",
+    theme_color: "#131313",
+    orientation: "portrait",
+    icons: [
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%23131313'/%3E%3Ctext x='96' y='130' font-size='100' text-anchor='middle' fill='%23f1c0c0' font-family='serif' font-style='italic'%3Es%3C/text%3E%3C/svg%3E", sizes: "192x192", type: "image/svg+xml" },
+      { src: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23131313'/%3E%3Ctext x='256' y='340' font-size='260' text-anchor='middle' fill='%23f1c0c0' font-family='serif' font-style='italic'%3Es%3C/text%3E%3C/svg%3E", sizes: "512x512", type: "image/svg+xml" }
+    ]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  document.getElementById('manifest-link').href = url;
+}
+
+injectManifest();
+init();
+</script>
+</body>
+</html>
